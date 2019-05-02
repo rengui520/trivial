@@ -1,0 +1,9 @@
+#DROP TABLE IF EXISTS vmovie
+
+CREATE TABLE vmovie(
+    id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+    cover VARCHAAR(255),
+    title VARCHAR(255),
+    mdec VARCHAR(255),
+    playUrl VARCHAR(255)
+) DEFAULT CHARSET=utf8;
