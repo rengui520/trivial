@@ -1,0 +1,124 @@
+<html>
+<head>
+  <title>将爬取的文章存储到MongoDB</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/600553 (zh-CN, DDL); Windows/6.1.1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="22821"/>
+<h1>将爬取的文章存储到MongoDB</h1>
+
+<div><span>
+  <div>
+<div><br/></div><div style="font-size: 16px; display:block; min-width: 100%; position: relative;"> <div style="font-family:-apple-system, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Helvetica Neue&quot;, Arial, sans-serif;text-size-adjust:100%;font-size:12px;text-rendering:optimizeLegibility;color:rgb(51, 51, 51);background-color:rgb(244, 245, 245);word-break:break-word;"><div style="font-size:12px;line-height:normal;word-break:break-word;"><div style="overflow-x:initial;"><div style="overflow:hidden;"><div><div style="transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;"><div><div style="box-sizing:border-box;background-color:rgb(230, 231, 233);"><div><div><div style="box-shadow:rgba(0, 0, 0, 0.15) 1px 1px 8px;background-color:rgb(255, 255, 255);border-radius:2px;box-sizing:border-box;"><div style="word-break:break-word;line-height:1.75;font-weight:400;font-size:15px;overflow-x:hidden;"><h1 style="font-size:30px;margin:1.3rem 0px;line-height:1.5;color:rgb(51, 51, 51);margin-top:35px;margin-bottom:5px;padding-bottom:5px;">将爬取的文章存储到MongoDB</h1>
+<p style="line-height:inherit;margin-bottom:22px;margin-top:25px;">关于数据的存储有很多选择，最简单的方式就是直接保存到 CSV 文件中，这种方式操作简单，适合数据量少的情况，Python的标准库 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">csv</code> 模块就可以直接支持。如果遇到数据量非常大的情况，就必须要用到专业的数据库系统，你既可以使用 MySQL 这样的关系型数据库，也可以使用 MongoDB 一类的文档型数据库。用Python 操作 MongoDB 非常方便，无需定义表结构就可以直接将数据插入，所以我们在这一节采用 MongoDB 来存储数据。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">MongoDB 安装</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">MongoDB 目前最新版本是3.6，在官网地址<a href="https://link.juejin.im/?target=https%3A%2F%2Fwww.mongodb.com%2Fdownload-center%23community" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">www.mongodb.com/download-ce…</a>选择相应平台下载安装。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="将爬取的文章存储到MongoDB_files/1" type="image/webp" data-filename="1" height="295" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">Windows 默认安装在 C:\Program Files\MongoDB\Server\3.6\，macOS 也可以直接通过 brew 命令安装，Linux平台直接下载压缩包解压即可。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>brew install mongodb --with-openssl
+</code></pre><h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">启动 MongoDB</h3>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>mongod --dbpath &lt;path to data directory&gt; 
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">默认端口是 27017，为了更好的查看数据，我们可以装一个 MongoDB 客户端， 官方自带有 compass，也可以下载第三方工具 Robo 3T <a href="https://link.juejin.im/?target=https%3A%2F%2Frobomongo.org%2F" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">robomongo.org/</a>，这里推荐大家使用免费的 Robo 3T。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="将爬取的文章存储到MongoDB_files/1 [1]" type="image/webp" data-filename="1" height="382" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="546"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">MongoEngine</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">MongoEngine 是 MongoDB 的 DOM（Document-Object Mapper）框架，一种类似于关系型数据库中的ORM框架 ，使用它可以更方便并写出简洁的代码</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">安装</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>$ pip install mongoengine
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">连接</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> connect
+<span style="color:rgb(153, 153, 136);"># 连接 mongodb，无需事先创建数据库</span>
+connect(<span style="color:rgb(221, 17, 68);">'weixin'</span>, host=<span style="color:rgb(221, 17, 68);">'localhost'</span>, port=<span style="color:teal;">27017</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">定义数据模型</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># -*- coding: utf-8 -*-</span>
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> datetime <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> datetime
+
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> DateTimeField
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> Document
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> IntField
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> StringField
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> URLField
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> mongoengine <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> connect
+
+__author__ = <span style="color:rgb(221, 17, 68);">&quot;liuzhijun&quot;</span>
+
+<span style="color:rgb(153, 153, 136);"># 连接 mongodb</span>
+connect(<span style="color:rgb(221, 17, 68);">'weixin2'</span>, host=<span style="color:rgb(221, 17, 68);">'localhost'</span>, port=<span style="color:teal;">27017</span>)
+
+
+<span><span style="color:rgb(51, 51, 51);font-weight:700;">class</span> <span style="color:rgb(68, 85, 136);font-weight:700;">Post</span><span>(Document)</span>:</span>
+    <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+    文章信息
+    &quot;&quot;&quot;</span>
+    title = StringField()  <span style="color:rgb(153, 153, 136);"># 文章标题</span>
+    content_url = StringField()  <span style="color:rgb(153, 153, 136);"># 文章链接</span>
+    content = StringField()  <span style="color:rgb(153, 153, 136);"># 文章内容</span>
+    source_url = StringField()  <span style="color:rgb(153, 153, 136);"># 原文链接</span>
+    digest = StringField()  <span style="color:rgb(153, 153, 136);"># 文章摘要</span>
+    cover = URLField(validation=<span style="color:rgb(51, 51, 51);font-weight:700;">None</span>)  <span style="color:rgb(153, 153, 136);"># 封面图</span>
+    p_date = DateTimeField()  <span style="color:rgb(153, 153, 136);"># 推送时间</span>
+
+    read_num = IntField(default=<span style="color:teal;">0</span>)  <span style="color:rgb(153, 153, 136);"># 阅读数</span>
+    like_num = IntField(default=<span style="color:teal;">0</span>)  <span style="color:rgb(153, 153, 136);"># 点赞数</span>
+    comment_num = IntField(default=<span style="color:teal;">0</span>)  <span style="color:rgb(153, 153, 136);"># 评论数</span>
+    reward_num = IntField(default=<span style="color:teal;">0</span>)  <span style="color:rgb(153, 153, 136);"># 赞赏数</span>
+    author = StringField()  <span style="color:rgb(153, 153, 136);"># 作者</span>
+
+    c_date = DateTimeField(default=datetime.now)  <span style="color:rgb(153, 153, 136);"># 数据生成时间</span>
+    u_date = DateTimeField(default=datetime.now)  <span style="color:rgb(153, 153, 136);"># 最后更新时间</span>
+
+</code></pre><h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">数据保存</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">在第五小节中，我们只是把抓取的数据简单的打印出来，现在我们就把它存数据库，因为抓取的数据中有很多无用的字段，所以，这里我们写一个工具函数叫 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">sub_dict</code> 用于获取指定字段信息。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(51, 51, 51);font-weight:700;">import</span> html
+<span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">sub_dict</span><span>(d, keys)</span>:</span>
+    <span style="color:rgb(51, 51, 51);font-weight:700;">return</span> {k: html.unescape(d[k]) <span style="color:rgb(51, 51, 51);font-weight:700;">for</span> k <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> d <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> k <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> keys}
+
+d = {<span style="color:rgb(221, 17, 68);">&quot;a&quot;</span>: <span style="color:rgb(221, 17, 68);">&quot;1&quot;</span>, <span style="color:rgb(221, 17, 68);">&quot;b&quot;</span>: <span style="color:teal;">2</span>, <span style="color:rgb(221, 17, 68);">&quot;c&quot;</span>: <span style="color:teal;">3</span>}
+sub_dict(d, [<span style="color:rgb(221, 17, 68);">&quot;a&quot;</span>, <span style="color:rgb(221, 17, 68);">&quot;b&quot;</span>]) <span style="color:rgb(153, 153, 136);"># {&quot;a&quot;:&quot;1&quot;, &quot;b&quot;: &quot;2&quot;}</span>
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">获取字典的子字典可以用字典推导式实现，我这里还导入了<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">html.unescape</code>方法是希望保存到数据库的数据都是经过反转义处理的。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 153);font-weight:700;">    @staticmethod</span>
+    <span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">save</span><span>(msg_list)</span>:</span>
+
+        msg_list = msg_list.replace(<span style="color:rgb(221, 17, 68);">&quot;\/&quot;</span>, <span style="color:rgb(221, 17, 68);">&quot;/&quot;</span>)
+        data = json.loads(msg_list)
+        msg_list = data.get(<span style="color:rgb(221, 17, 68);">&quot;list&quot;</span>)
+        <span style="color:rgb(51, 51, 51);font-weight:700;">for</span> msg <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> msg_list:
+            p_date = msg.get(<span style="color:rgb(221, 17, 68);">&quot;comm_msg_info&quot;</span>).get(<span style="color:rgb(221, 17, 68);">&quot;datetime&quot;</span>)
+            msg_info = msg.get(<span style="color:rgb(221, 17, 68);">&quot;app_msg_ext_info&quot;</span>)  <span style="color:rgb(153, 153, 136);"># 非图文消息没有此字段</span>
+            <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> msg_info:
+                WeiXinCrawler._insert(msg_info, p_date)
+                multi_msg_info = msg_info.get(<span style="color:rgb(221, 17, 68);">&quot;multi_app_msg_item_list&quot;</span>) <span style="color:rgb(153, 153, 136);"># 多图文推送，把第二条第三条也保存</span>
+                <span style="color:rgb(51, 51, 51);font-weight:700;">for</span> msg_item <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> multi_msg_info:
+                    WeiXinCrawler._insert(msg_item, p_date)
+            <span style="color:rgb(51, 51, 51);font-weight:700;">else</span>:
+                logger.warning(<span style="color:rgb(221, 17, 68);">u&quot;此消息不是图文推送，data=%s&quot;</span> % json.dumps(msg.get(<span style="color:rgb(221, 17, 68);">&quot;comm_msg_info&quot;</span>)))
+
+<span style="color:rgb(153, 153, 153);font-weight:700;">    @staticmethod</span>
+    <span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">_insert</span><span>(item, p_date)</span>:</span>
+        keys = (<span style="color:rgb(221, 17, 68);">'title'</span>, <span style="color:rgb(221, 17, 68);">'author'</span>, <span style="color:rgb(221, 17, 68);">'content_url'</span>, <span style="color:rgb(221, 17, 68);">'digest'</span>, <span style="color:rgb(221, 17, 68);">'cover'</span>, <span style="color:rgb(221, 17, 68);">'source_url'</span>)
+        sub_data = utils.sub_dict(item, keys)
+        post = Post(**sub_data)
+        p_date = datetime.fromtimestamp(p_date)
+        post[<span style="color:rgb(221, 17, 68);">&quot;p_date&quot;</span>] = p_date
+        logger.info(<span style="color:rgb(221, 17, 68);">'save data %s '</span> % post.title)
+        <span style="color:rgb(51, 51, 51);font-weight:700;">try</span>:
+            post.save()
+        <span style="color:rgb(51, 51, 51);font-weight:700;">except</span> Exception <span style="color:rgb(51, 51, 51);font-weight:700;">as</span> e:
+            logger.error(<span style="color:rgb(221, 17, 68);">&quot;保存失败 data=%s&quot;</span> % post.to_json(), exc_info=<span style="color:rgb(51, 51, 51);font-weight:700;">True</span>)
+
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">如果是文字推送就没有<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">app_msg_ext_info</code>字段，无需保存，<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">multi_app_msg_item_list</code>是多图文推送字段，而且和外层的<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">app_msg_ext_info</code>字段是一致的，有标题、封面图、摘要、链接等信息，所以我们把插入数据库的代码<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">_insert</code>作为私有方法抽离出来共用。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最后我们看一下保存的数据。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="将爬取的文章存储到MongoDB_files/1 [2]" type="image/webp" data-filename="1" height="397" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">小结</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">本节完成代码在GitHub <a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler%2Ftree%2Fv0.3" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">v0.3</a>，这小节我们主要熟悉 Mongodb 的安装以及如何用Python连接 Mongodb 进行数据存储，推荐两个资源，第一个是：<a href="https://link.juejin.im/?target=https%3A%2F%2Fjockchou.gitbooks.io%2Fgetting-started-with-mongodb%2Fcontent%2F" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">《MongoDB 入门指南》</a>，第二个是 <a href="https://link.juejin.im/?target=http%3A%2F%2Fdocs.mongoengine.org%2Findex.html" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">MongoEngine 教程</a>，如果你想进行系统的学习 MongoDB，推荐两本书籍《MongoDB权威指南》和《MongoDB实战》。</p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div>
+</div>
+</span>
+</div></body></html> 

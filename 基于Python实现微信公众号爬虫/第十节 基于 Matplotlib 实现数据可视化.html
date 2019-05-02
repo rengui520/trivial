@@ -1,0 +1,163 @@
+<html>
+<head>
+  <title>基于 Matplotlib 实现数据可视化</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/600553 (zh-CN, DDL); Windows/6.1.1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="22864"/>
+<h1>基于 Matplotlib 实现数据可视化</h1>
+
+<div><span>
+  <div>
+<div><br/></div><div style="font-size: 16px; display:block; min-width: 100%; position: relative;"> <div style="font-family:-apple-system, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Helvetica Neue&quot;, Arial, sans-serif;text-size-adjust:100%;font-size:12px;text-rendering:optimizeLegibility;color:rgb(51, 51, 51);background-color:rgb(244, 245, 245);word-break:break-word;"><div style="font-size:12px;line-height:normal;word-break:break-word;"><div style="overflow-x:initial;"><div style="overflow:hidden;"><div><div style="transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;"><div><div style="box-sizing:border-box;background-color:rgb(230, 231, 233);"><div><div><div style="box-shadow:rgba(0, 0, 0, 0.15) 1px 1px 8px;background-color:rgb(255, 255, 255);border-radius:2px;box-sizing:border-box;"><div style="word-break:break-word;line-height:1.75;font-weight:400;font-size:15px;overflow-x:hidden;"><h1 style="font-size:30px;margin:1.3rem 0px;line-height:1.5;color:rgb(51, 51, 51);margin-top:35px;margin-bottom:5px;padding-bottom:5px;">基于 Matplotlib 实现数据可视化</h1>
+<p style="line-height:inherit;margin-bottom:22px;margin-top:25px;">上节我们介绍了 Pandas 的基本操作，这节我们使用 Pandas 结合 Matplotlib 对数据进行可视化展示。首先我们把数据加载到 Pandas，现在假设你已经拥有了数据，如果没有数据可以下载我给你准备的<a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler%2Fblob%2Fmaster%2Fpost.csv" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">JSON文件</a>。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">加载数据</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">启动 juypter notebook 之后基于Python3 新建一个 notebook，之所以不选择叫 weixin 的 Python 解释器是因为默认的 Python3 已经包含了所有的数据分析相关包，无需另外下载。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1" type="image/webp" data-filename="1" height="225" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="433"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">在终端查看我的系统里有哪些虚拟环境</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>conda info <span>-e</span>
+<span style="color:rgb(153, 153, 136);"># conda environments:</span>
+<span style="color:rgb(153, 153, 136);">#</span>
+crawler-toturial         /Users/lzjun/anaconda3/envs/crawler-toturial
+crawler_test             /Users/lzjun/anaconda3/envs/crawler_test
+weixin                   /Users/lzjun/anaconda3/envs/weixin
+root                  *  /Users/lzjun/anaconda3
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">以上是我系统里面用 conda 管理的虚拟环境，juypter notebook 中的 Python3 对应的就是 root 环境，我们现在切换到 root 环境来安装其它第三方包。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span><span style="color:rgb(153, 153, 136);"># windows 不需要加 source</span>
+<span style="color:rgb(0, 134, 179);">source</span> activate root
+<span style="color:rgb(153, 153, 136);"># 安装 pymongo</span>
+pip install pymongo
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">回到 jupyter notebook ，导入基础包（以下代码都是在 jupyter notebook 中完成）</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 加这行不需要再写plt.show()，直接显示图像出来</span>
+%matplotlib inline 
+
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> matplotlib.pyplot <span style="color:rgb(51, 51, 51);font-weight:700;">as</span> plt
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> pandas <span style="color:rgb(51, 51, 51);font-weight:700;">as</span> pd
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> numpy <span style="color:rgb(51, 51, 51);font-weight:700;">as</span> np
+
+display_columns = [<span style="color:rgb(221, 17, 68);">&quot;title&quot;</span>,<span style="color:rgb(221, 17, 68);">&quot;read_num&quot;</span>,<span style="color:rgb(221, 17, 68);">&quot;like_num&quot;</span>,<span style="color:rgb(221, 17, 68);">&quot;comment_num&quot;</span>,<span style="color:rgb(221, 17, 68);">&quot;reward_num&quot;</span>,<span style="color:rgb(221, 17, 68);">&quot;p_date&quot;</span>]
+</code></pre><h4 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:5px;font-size:16px;">从 MongoDB 导入数据</h4>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(51, 51, 51);font-weight:700;">import</span> pymongo
+<span style="color:rgb(51, 51, 51);font-weight:700;">from</span> pymongo <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> MongoClient
+<span style="color:rgb(153, 153, 136);"># 连接 mongodb</span>
+c = MongoClient()
+cursor = c.weixin3[<span style="color:rgb(221, 17, 68);">'post'</span>].find()
+df = pd.DataFrame(list(cursor))
+
+<span style="color:rgb(153, 153, 136);"># 删除 &quot;_id&quot;列</span>
+df = df.drop(<span style="color:rgb(221, 17, 68);">&quot;_id&quot;</span>, axis=<span style="color:teal;">1</span>)
+<span style="color:rgb(153, 153, 136);"># 重新设置列的顺序</span>
+df = df.reindex(columns=display_columns)
+<span style="color:rgb(153, 153, 136);"># 将p_date的数据类型从timestamp 转换成 datetime</span>
+df.p_date = pd.to_datetime(df[<span style="color:rgb(221, 17, 68);">'p_date'</span>])
+df.head()
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">前5条数据：</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [1]" type="image/webp" data-filename="1" height="201" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h4 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:5px;font-size:16px;">从 CSV 文件中导入</h4>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">如果你的 MongoDB 没有数据，可以用我给你准备的<a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler%2Fblob%2Fmaster%2Fpost.csv" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">JSON文件</a>，下载到本地后用 Pandas 导入进来</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 从csv文件中加载</span>
+df = pd.read_csv(<span style="color:rgb(221, 17, 68);">&quot;post.csv&quot;</span>)
+<span style="color:rgb(153, 153, 136);"># 重新设置列的顺序</span>
+df = df.reindex(columns=display_columns)
+<span style="color:rgb(153, 153, 136);"># 将p_date的数据类型从timestamp 转换成 datetime</span>
+df.p_date = pd.to_datetime(df[<span style="color:rgb(221, 17, 68);">'p_date'</span>])
+</code></pre><h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">文章与阅读数</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">数据加载到 Pandas 之后，先来看下数据的总体概览情况</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [2]" type="image/webp" data-filename="1" height="345" style="visibility:visible;width:auto;border-style:none;height:auto;max-height:none;background-color:rgb(248, 249, 250);background-position:50% center;background-repeat:no-repeat;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">从上面看出公众号一共发了 203 篇文章，文章平均阅读量是 2404，标准差 2005 说明文章阅读量波动非常大，从最高阅读量 8628 到最低阅读量 124 可以证明其波动性。为什么标准差这么大呢？这个其实很容易说明，因为公众号初期订阅读者少，阅读量也不高，但是随着你读者越来越多，阅读量也会越来越高。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">这里的文章赞赏数和点赞数有一定的误差，因为我在初始化数据的时候，给每篇文章赞赏数默认设置为了0，而正确的方式应该是设置为None，如果为None 数据就不会统计进来。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">获取阅读量最高的10篇文章</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 根据阅读数排序，ascending 表示降序排列</span>
+top_read_num_10 = df.sort_values(by=[<span style="color:rgb(221, 17, 68);">'read_num'</span>], ascending=<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)[:<span style="color:teal;">10</span>]
+top_read_num_10 = top_read_num_10[display_columns]
+<span style="color:rgb(153, 153, 136);"># 重置行索引，drop 表示删除原来的行索引</span>
+top_read_num_10.reset_index(drop=<span style="color:rgb(51, 51, 51);font-weight:700;">True</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [3]" type="image/webp" data-filename="1" height="366" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">历史文章阅读量变化曲线</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>ax = df.plot(y=<span style="color:rgb(221, 17, 68);">'read_num'</span>, x=<span style="color:rgb(221, 17, 68);">'p_date'</span>, title=<span style="color:rgb(221, 17, 68);">&quot;文章阅读量趋势&quot;</span>,figsize=(<span style="color:teal;">9</span>,<span style="color:teal;">6</span>))
+<span style="color:rgb(153, 153, 136);"># 设置y轴标签</span>
+ax.set_ylabel(<span style="color:rgb(221, 17, 68);">&quot;阅读量&quot;</span>)
+<span style="color:rgb(153, 153, 136);"># 设置x轴标签</span>
+ax.set_xlabel(<span style="color:rgb(221, 17, 68);">&quot;&quot;</span>)
+<span style="color:rgb(153, 153, 136);"># 隐藏图例</span>
+ax.legend().set_visible(<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [4]" type="image/webp" data-filename="1" height="355" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="560"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">一眼就看出来，阅读量都集中在 2017 这一年，那么前几年究竟发生什么了？是没写文章还是写了文章没人看？我们来统计一下这几年的文章数。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [5]" type="image/webp" data-filename="1" height="285" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">数据告诉我们，13年发了2篇文章（笑cry表情），而17年发了 149 篇文章（棒棒哒），平均每周大概有近 3 篇文章的更新频率，用柱状图展示就是这样：</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>ax = year_df.plot(x=<span style="color:rgb(221, 17, 68);">'p_date'</span>, y=<span style="color:rgb(221, 17, 68);">'total'</span>, kind=<span style="color:rgb(221, 17, 68);">'bar'</span>, figsize=(<span style="color:teal;">9</span>,<span style="color:teal;">6</span>), fontsize=<span style="color:teal;">15</span>)
+ax.set_ylabel(<span style="color:rgb(221, 17, 68);">&quot;文章数&quot;</span>)
+ax.set_xlabel(<span style="color:rgb(221, 17, 68);">&quot;&quot;</span>)
+ax.legend().set_visible(<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+<span style="color:rgb(153, 153, 136);"># 柱状图上显示数字</span>
+<span style="color:rgb(51, 51, 51);font-weight:700;">for</span> p <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> ax.patches:
+    ax.annotate(str(p.get_height()), xy=(p.get_x(), p.get_height()))
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [6]" type="image/webp" data-filename="1" height="381" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="563"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">文章与赞赏</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">再来分析我们的文章赞赏情况</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [7]" type="image/webp" data-filename="1" height="265" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div>
+总共有101篇文章赞赏，平均两篇文章就有1次赞赏，读者一共贡献了 518 次赞赏，谢谢可爱读者们支持（微笑表情）<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">用同样的方式可以得到文章赞赏数前10的数据：</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>top_reward_num = df.sort_values(by=[<span style="color:rgb(221, 17, 68);">'reward_num'</span>], ascending=<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)[:<span style="color:teal;">10</span>]
+top_reward_num = top_reward_num[display_columns]
+top_reward_num
+top_reward_num.reset_index(drop=<span style="color:rgb(51, 51, 51);font-weight:700;">True</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [8]" type="image/webp" data-filename="1" height="305" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最高的一篇文章有83个打赏，这究竟是一篇什么文章，戳--&gt;<a href="https://link.juejin.im/?target=http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMjM5MzgyODQxMQ%3D%3D%26mid%3D2650367720%26idx%3D1%26sn%3D87e32a97392f320c17960c31f1035182%26chksm%3Dbe9cddbc89eb54aa0277dd7e79acbb7fc44319156b0ec59ff9e9b30ffdac18489b10b663c7c2%26scene%3D27%23wechat_redirect" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">自学Python编程怎么学才不那么孤独</a></p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>ax = top_reward_num.plot(x=<span style="color:rgb(221, 17, 68);">'title'</span>,
+                         y=<span style="color:rgb(221, 17, 68);">'reward_num'</span>, 
+                         kind=<span style="color:rgb(221, 17, 68);">'barh'</span>, 
+                         figsize=(<span style="color:teal;">9</span>,<span style="color:teal;">6</span>),
+                         fontsize=<span style="color:teal;">14</span>)
+ax.set_ylabel(<span style="color:rgb(221, 17, 68);">&quot;&quot;</span>)
+ax.set_xlabel(<span style="color:rgb(221, 17, 68);">&quot;赞赏数&quot;</span>)
+ax.legend().set_visible(<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">这里的 kind 用 &quot;barh&quot; 表示横向的条形图</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [9]" type="image/webp" data-filename="1" height="340" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">文章与点赞</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">说完赞赏的数据，再来看看点赞数与文章阅读数有什么关系，我们可以用散点图来表示二者之间关系，散点图用两组数据构成多个坐标点，表示因变量随自变量而变化的大致趋势。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 散点图</span>
+ax = df.plot(kind=<span style="color:rgb(221, 17, 68);">&quot;scatter&quot;</span>, y=<span style="color:rgb(221, 17, 68);">'like_num'</span>, x=<span style="color:rgb(221, 17, 68);">'read_num'</span>,s=<span style="color:teal;">10</span>, figsize=(<span style="color:teal;">9</span>,<span style="color:teal;">6</span>), fontsize=<span style="color:teal;">15</span>)
+ax.set_xlabel(<span style="color:rgb(221, 17, 68);">&quot;阅读量&quot;</span>)
+ax.set_ylabel(<span style="color:rgb(221, 17, 68);">&quot;点赞数&quot;</span>)
+
+z = np.polyfit(df.read_num, df.like_num, <span style="color:teal;">1</span>)
+p = np.poly1d(z)
+plt.plot(df.read_num,p(df.read_num),<span style="color:rgb(221, 17, 68);">&quot;r--&quot;</span>)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [10]" type="image/webp" data-filename="1" height="376" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="562"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">可以看出文章点赞数大部分集中在10~50之间，而且存在某种线性正相关性，也就是说，文章阅读数越高，点赞数也就越高，如果某篇文章阅读量很高，但是点赞数却很低，这样的文章是标题党或者是资讯类的文章的可能性比较大。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">标题关键字</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最后，我想基于文章标题做一个词云效果展示，看看这些文章标题都用了哪些关键字。这里需要用到另个包，一个是结巴分词，另一个词云包</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>conda install jieba
+conda install wordcloud
+</code></pre><pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>from wordcloud import WordCloud
+import jieba
+
+words = []
+<span style="color:rgb(51, 51, 51);font-weight:700;">for</span> i <span style="color:rgb(51, 51, 51);font-weight:700;">in</span>  df.title:
+    seg_list = jieba.cut(i, cut_all=False)
+    words.append(<span style="color:rgb(221, 17, 68);">&quot; &quot;</span>.join(seg_list))
+wordcloud = WordCloud(font_path=<span style="color:rgb(221, 17, 68);">'/Library/Fonts/Songti.ttc'</span>,
+                      background_color=<span style="color:rgb(221, 17, 68);">&quot;white&quot;</span>, 
+                      max_words=80,).generate(<span style="color:rgb(221, 17, 68);">&quot; &quot;</span>.join(words))
+plt.figure(figsize=(9,6))
+plt.imshow(wordcloud, interpolation=<span style="color:rgb(221, 17, 68);">&quot;bilinear&quot;</span>)
+plt.axis(<span style="color:rgb(221, 17, 68);">&quot;off&quot;</span>)
+plt.show()
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">把所有文章的标题同结巴库分词处理加入到 words 列表中，传递给 WordCloud 组件，另外还需要指定一个中文字体，因为 wordcloud 默认无法处理中文。max_words 用于指定最多显示多少词语</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="基于 Matplotlib 实现数据可视化_files/1 [11]" type="image/webp" data-filename="1" height="284" style="visibility:visible;width:auto;border-style:none;height:auto;max-height:none;background-color:rgb(248, 249, 250);background-position:50% center;background-repeat:no-repeat;margin:0px;cursor:zoom-in;max-width:100%;" width="542"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">小结</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">到这里，我们就完成了一个公众号基本分析工作，得到一些结论，比如阅读量高的往往不是某个具体的知识点干货内容，而是一些更通俗的文章，要么是资讯，要么是一些工具介绍，或者是编程的方法论等文章。而赞赏文章基本集中在带有福利的文章里面，从文章标题得知公众号文章都是围绕Python写的文章。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">本节ipynb源代码地址：<a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">github.com/pythonzhich…</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div>
+</div>
+</span>
+</div></body></html> 

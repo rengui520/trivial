@@ -1,0 +1,139 @@
+<html>
+<head>
+  <title>抓取公众号所有历史文章</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/600553 (zh-CN, DDL); Windows/6.1.1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="22825"/>
+<h1>抓取公众号所有历史文章</h1>
+
+<div><span>
+  <div>
+<div><br/></div><div style="font-size: 16px; display:block; min-width: 100%; position: relative;"> <div style="font-family:-apple-system, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Helvetica Neue&quot;, Arial, sans-serif;text-size-adjust:100%;font-size:12px;text-rendering:optimizeLegibility;color:rgb(51, 51, 51);background-color:rgb(244, 245, 245);word-break:break-word;"><div style="font-size:12px;line-height:normal;word-break:break-word;"><div style="overflow-x:initial;"><div style="overflow:hidden;"><div><div style="transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;"><div><div style="box-sizing:border-box;background-color:rgb(230, 231, 233);"><div><div><div style="box-shadow:rgba(0, 0, 0, 0.15) 1px 1px 8px;background-color:rgb(255, 255, 255);border-radius:2px;box-sizing:border-box;"><div style="word-break:break-word;line-height:1.75;font-weight:400;font-size:15px;overflow-x:hidden;"><h1 style="font-size:30px;margin:1.3rem 0px;line-height:1.5;color:rgb(51, 51, 51);margin-top:35px;margin-bottom:5px;padding-bottom:5px;">抓取公众号所有历史文章</h1>
+<p style="line-height:inherit;margin-bottom:22px;margin-top:25px;">我们按照第三节使用 Fiddler 抓包方式，打开手机某个微信公众号历史文章列表，上拉加载更多，找到加载更多文章的 URL 请求地址，你会看到 Fiddler 会有一个加载更多文章列表的请求。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取公众号所有历史文章_files/1" type="image/webp" data-filename="1" height="351" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">分析抓包数据</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">该接口返回的数据是 JSON 格式，这种数据格式处理起来非常方便，首先我们把数据拷贝到 Chrome 插件 JSON Editor 或者找一个<a href="https://link.juejin.im/?target=https%3A%2F%2Fjsonformatter.curiousconcept.com%2F" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">JSON Online Formatter</a> 对返回的数据进行格式化处理，以便查看每个字段所代表的意义。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取公众号所有历史文章_files/1 [1]" type="image/webp" data-filename="1" height="286" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="564"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">你可以大概猜出来每个字段的意思</p>
+<ul style="padding:0px;margin:0px;padding-left:28px;">
+<li style="margin-bottom:0px;list-style:inherit;">ret：请求是否成功，0就表示成功</li>
+<li style="margin-bottom:0px;list-style:inherit;">msg_count： 返回的数据条数</li>
+<li style="margin-bottom:0px;list-style:inherit;">can_msg_continue： 是否还有下一页数据</li>
+<li style="margin-bottom:0px;list-style:inherit;">next_offset： 下一次请求的起始位置</li>
+<li style="margin-bottom:0px;list-style:inherit;">general_msg_list：真实数据</li>
+</ul>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"><code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">general_msg_list</code>是历史文章里面的基本信息，包括每篇文章的标题、发布时间、摘要、链接地址、封面图等，而像文章的阅读数、点赞数、评论数、赞赏数这些数据都需要通过额外接口获取。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">代码实现</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">分析完后，用代码实现其实非常简单，按照上节的方式，我们把 URL 和 Header 信息直接从 Fiddler 中拷贝过来。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># crawler.py</span>
+<span style="color:rgb(153, 153, 136);"># -*- coding: utf-8 -*-</span>
+
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> logging
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> utils
+<span style="color:rgb(51, 51, 51);font-weight:700;">import</span> requests
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
+
+<span><span style="color:rgb(51, 51, 51);font-weight:700;">class</span> <span style="color:rgb(68, 85, 136);font-weight:700;">WeiXinCrawler</span>:</span>
+    <span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">crawl</span><span>(self)</span>:</span>
+        <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+        爬取更多文章
+        :return:
+        &quot;&quot;&quot;</span>
+        url = <span style="color:rgb(221, 17, 68);">&quot;https://mp.weixin.qq.com/mp/profile_ext?&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;action=getmsg&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;__biz=MjM5MzgyODQxMQ==&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;&amp;f=json&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;offset=11&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;count=10&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;is_ok=1&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;&amp;scene=124&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;uin=777&amp;key=777&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;pass_ticket=25llsA6zWUPC9KHOvP4oE%2BQwJ3nS%2F3CjeWxeKBjDhxCb7V1lQQJa6d0ZrgSmCvWa&amp;wxtoken=&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;appmsg_token=936_qKN8I1KSEO%252BWB2YUShHV8kgkIGXgzl-CT8JJpw~~&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;x5=0&amp;&quot;</span> \
+                <span style="color:rgb(221, 17, 68);">&quot;f=json&quot;</span>
+
+
+        headers = <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+                    Host: mp.weixin.qq.com
+                    .... 省略了，自己补充 ...
+                    &quot;&quot;&quot;</span>
+        headers = utils.str_to_dict(headers)
+        response = requests.get(url, headers=headers, verify=<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+        result = response.json()
+        <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> result.get(<span style="color:rgb(221, 17, 68);">&quot;ret&quot;</span>) == <span style="color:teal;">0</span>:
+            msg_list = result.get(<span style="color:rgb(221, 17, 68);">&quot;general_msg_list&quot;</span>)
+            logger.info(<span style="color:rgb(221, 17, 68);">&quot;抓取数据：offset=%s, data=%s&quot;</span> % (offset, msg_list))
+        <span style="color:rgb(51, 51, 51);font-weight:700;">else</span>:
+            <span style="color:rgb(153, 153, 136);"># 错误消息</span>
+            <span style="color:rgb(153, 153, 136);"># {&quot;ret&quot;:-3,&quot;errmsg&quot;:&quot;no session&quot;,&quot;cookie_count&quot;:1}</span>
+            logger.error(<span style="color:rgb(221, 17, 68);">&quot;无法正确获取内容，请重新从Fiddler获取请求参数和请求头&quot;</span>)
+            exit()
+
+
+<span style="color:rgb(51, 51, 51);font-weight:700;">if</span> __name__ == <span style="color:rgb(221, 17, 68);">'__main__'</span>:
+    crawler = WeiXinCrawler()
+    crawler.crawl()
+
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">成功爬取了第二页的数据，那么第三页呢，第四页呢？所以，我们还需要对该方法进行重构，使得它可以抓取公众号全部历史文章。通过字段 can_msg_continue 确定是否继续抓取，再结合 next_offset 就可以加载更多数据，我们需要把 url 中可变的参数 offset 用变量来代替，递归调用直到 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">can_msg_continue</code> 为 0 说明所有文章都爬取完了。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>    <span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">crawl</span><span>(self, offset=<span style="color:teal;">0</span>)</span>:</span>
+        <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+        爬取更多文章
+        :return:
+        &quot;&quot;&quot;</span>
+        url = <span style="color:rgb(221, 17, 68);">&quot;https://mp.weixin.qq.com/mp/profile_ext?&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;action=getmsg&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;__biz=MjM5MzgyODQxMQ==&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;f=json&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;offset={offset}&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;count=10&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;is_ok=1&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;scene=&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;uin=777&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;key=777&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;pass_ticket=25llsA6zWUPC9KHOvP4oE+QwJ3nS/3CjeWxeKBjDhxCb7V1lQQJa6d0ZrgSmCvWa&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;wxtoken=&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;appmsg_token=936_qKN8I1KSEO%2BWB2YUShHV8kgkIGXgzl-CT8JJpw~~&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;x5=1&amp;&quot;</span> \
+              <span style="color:rgb(221, 17, 68);">&quot;f=json&quot;</span>.format(offset=offset)  <span style="color:rgb(153, 153, 136);"># 请将appmsg_token和pass_ticket替换成你自己的</span>
+
+        headers = <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+Host: mp.weixin.qq.com
+.... 省略了，自己补充 ...
+&quot;&quot;&quot;</span>
+        headers = utils.str_to_dict(headers)
+        response = requests.get(url, headers=headers, verify=<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+        result = response.json()
+        <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> result.get(<span style="color:rgb(221, 17, 68);">&quot;ret&quot;</span>) == <span style="color:teal;">0</span>:
+            msg_list = result.get(<span style="color:rgb(221, 17, 68);">&quot;general_msg_list&quot;</span>)
+            logger.info(<span style="color:rgb(221, 17, 68);">&quot;抓取数据：offset=%s, data=%s&quot;</span> % (offset, msg_list))
+            <span style="color:rgb(153, 153, 136);"># 递归调用</span>
+            has_next = result.get(<span style="color:rgb(221, 17, 68);">&quot;can_msg_continue&quot;</span>)
+            <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> has_next == <span style="color:teal;">1</span>:
+                next_offset = result.get(<span style="color:rgb(221, 17, 68);">&quot;next_offset&quot;</span>)
+                time.sleep(<span style="color:teal;">2</span>)
+                self.crawl(next_offset)
+        <span style="color:rgb(51, 51, 51);font-weight:700;">else</span>:
+            <span style="color:rgb(153, 153, 136);"># 错误消息</span>
+            <span style="color:rgb(153, 153, 136);"># {&quot;ret&quot;:-3,&quot;errmsg&quot;:&quot;no session&quot;,&quot;cookie_count&quot;:1}</span>
+            logger.error(<span style="color:rgb(221, 17, 68);">&quot;无法正确获取内容，请重新从Fiddler获取请求参数和请求头&quot;</span>)
+            exit()
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">当 has_next 为 0 时，说明已经到了最后一页，这时才算爬完了一个公众号的所有历史文章，现在把所有的文章摘要数据抓取下来了，但是数据还没有存储，下一节，我们将使用MongoDB将数据进行持久化。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">本节完整代码地址：<a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler%2Ftree%2Fv0.2" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">weixincrawler/v0.2</a></p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div>
+</div>
+</span>
+</div></body></html> 

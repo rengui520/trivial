@@ -1,0 +1,110 @@
+<html>
+<head>
+  <title>搭建数据分析环境：Anaconda、Jupyter Notebook</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/600553 (zh-CN, DDL); Windows/6.1.1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="22812"/>
+<h1>搭建数据分析环境：Anaconda、Jupyter Notebook</h1>
+
+<div><span>
+  <div>
+<div><br/></div><div style="font-size: 16px; display:block; min-width: 100%; position: relative;"> <div style="font-family:-apple-system, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Helvetica Neue&quot;, Arial, sans-serif;text-size-adjust:100%;font-size:12px;text-rendering:optimizeLegibility;color:rgb(51, 51, 51);background-color:rgb(244, 245, 245);word-break:break-word;"><div style="font-size:12px;line-height:normal;word-break:break-word;"><div style="overflow-x:initial;"><div style="overflow:hidden;"><div><div style="transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;"><div><div style="box-sizing:border-box;background-color:rgb(230, 231, 233);"><div><div><div style="box-shadow:rgba(0, 0, 0, 0.15) 1px 1px 8px;background-color:rgb(255, 255, 255);border-radius:2px;box-sizing:border-box;"><div style="word-break:break-word;line-height:1.75;font-weight:400;font-size:15px;overflow-x:hidden;"><h1 style="font-size:30px;margin:1.3rem 0px;line-height:1.5;color:rgb(51, 51, 51);margin-top:35px;margin-bottom:5px;padding-bottom:5px;">搭建数据分析环境：Anaconda、Jupyter Notebook</h1>
+<p style="line-height:inherit;margin-bottom:22px;margin-top:25px;">Anaconda 是一个针对数据分析领域的 Python 发行版本，它提供了包管理（packages）工具和虚拟环境（environment）管理， <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">conda</code> 命令可用于安装、卸载、更新包、创建不同版本的 Python 独立环境，可用于替换 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">pip</code> 和 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">virtualenv</code> 这两个工具。此外，Anaconda 自带了很多数据科学的依赖包以及Juypter Notebook 等工具。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">Anaconda 下载安装</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">可直接从 Anaconda <a href="https://link.juejin.im/?target=https%3A%2F%2Fwww.anaconda.com%2Fdownload%2F" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">官方网站</a>进行下载，选择 Python3.6 的版本，因为 Python2.7即将被废弃，下载后根据提示安装即可</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="搭建数据分析环境：Anaconda、Jupyter Notebook_files/1" type="image/webp" data-filename="1" height="379" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">macOS/Linux 安装完成之后会自动把 Anaconda 添加到 PATH 环境变量（在 ~/.bash_profile 文件中可以看到），如果你的终端默认 SHELL 不是 bash 的话（用 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">echo $SHELL</code> 查看默认 shell 是啥），加了系统也找不到 conda 命令，比如我的 mac 默认 shell 是 zsh ，需要把下面这行添加到 ~/.zshrc 文件中</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span><span style="color:rgb(153, 153, 136);"># added by Anaconda3 5.0.1 installer</span>
+<span style="color:rgb(0, 134, 179);">export</span> PATH=<span style="color:rgb(221, 17, 68);">&quot;/Users/你的用户名/anaconda3/bin:<span style="color:teal;">$PATH</span>&quot;</span>
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">再检查 conda 命令是否能用</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>conda -V
+conda 4.3.30
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">Windows 平台安装的时候请自动勾选加入 PATH 路径，如果安装的时候没有勾选，要手动找到 Anoconda 的安装路径加入到 PATH 变量中，否则一样找不到 conda 命令。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="搭建数据分析环境：Anaconda、Jupyter Notebook_files/1 [1]" type="image/webp" data-filename="1" height="387" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="499"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">为了使用 conda 安装包的过程中加快速度，可以把镜像地址修改为国内清华大学的镜像：编辑  ~/.condrc，（Windows 是在C:\Users\你的用户名.condrc，如果没有该文件就创建一个），添加内容：</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
+ssl_verify: <span style="color:teal;">false</span>
+show_channel_urls: <span style="color:teal;">true</span>
+
+</code></pre><h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">常用 conda 命令</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">包管理</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 查看帮助</span>
+conda -h 
+<span style="color:rgb(153, 153, 136);"># 查看conda版本</span>
+conda --version
+<span style="color:rgb(153, 153, 136);"># 安装 matplotlib </span>
+conda install matplotlib
+<span style="color:rgb(153, 153, 136);"># 查看已安装的包</span>
+conda list 
+<span style="color:rgb(153, 153, 136);"># 包更新</span>
+conda update matplotlib
+<span style="color:rgb(153, 153, 136);"># 删除包</span>
+conda remove matplotlib
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">环境管理</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 基于python3.6版本创建一个名字为test的python独立环境</span>
+conda create --name test python=<span style="color:teal;">3.6</span> 
+<span style="color:rgb(153, 153, 136);"># 激活此环境</span>
+activate test  
+source activate test <span style="color:rgb(153, 153, 136);"># linux/mac</span>
+<span style="color:rgb(153, 153, 136);"># 退出当前环境</span>
+deactivate test 
+<span style="color:rgb(153, 153, 136);"># 删除该环境</span>
+conda remove -n test --all
+<span style="color:rgb(153, 153, 136);"># 或者 </span>
+conda env remove  -n test
+
+<span style="color:rgb(153, 153, 136);"># 查看所有安装的python环境</span>
+conda info -e
+test              *  D:\Programs\Anaconda3\envs\test
+root                     D:\Programs\Anaconda3（安装 conda 默认生成的）
+
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">其他命令</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># 更新conda本身</span>
+conda update conda
+<span style="color:rgb(153, 153, 136);"># 更新anaconda 应用</span>
+conda update anaconda
+<span style="color:rgb(153, 153, 136);"># 更新python，假设当前python环境是3.6.1，而最新版本是3.6.2，那么就会升级到3.6.2</span>
+conda update python
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">安装完 Anoconda 之后，Jupyter Notebook 也装好了。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">Jupyter Notebook 是一个强大的数据分析工具，你可以在上面写代码、运行代码、写文档、列方程式、做数据可视化展示。 正如其名，它就像一个草稿本可以在上面随意地涂写改改画画，画错了还可以擦除重做。</p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">启动jupyter</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">在命令行直接输入：</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span>jupyter notebook
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">Jupyter 启动成功后，在浏览器中会自动打开 notebook 的主界面，新建一个notebook时要点击右上角的 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">New</code>，选择 Python3 ，这里的 Python3 就是 jupyter 的内核，是安装 Anaconda 的时候的名字为root的默认 python 环境。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="搭建数据分析环境：Anaconda、Jupyter Notebook_files/160cc83cabb5d763" type="image/gif" data-filename="160cc83cabb5d763" height="272" style="visibility:visible;width:auto;border-style:none;height:auto;max-height:none;background-color:rgb(248, 249, 250);background-position:50% center;background-repeat:no-repeat;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">新建了 notebook 之后你就可以在单元格里面写代码或者写 markdown 文档，或者基于用 matplotlib 制图。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="搭建数据分析环境：Anaconda、Jupyter Notebook_files/1 [2]" type="image/webp" data-filename="1" height="286" style="visibility:visible;width:auto;border-style:none;height:auto;max-height:none;background-color:rgb(248, 249, 250);background-position:50% center;background-repeat:no-repeat;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<h3 style="color:rgb(51, 51, 51);line-height:1.5;margin-top:35px;margin-bottom:10px;padding-bottom:0px;font-size:18px;">补充</h3>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">如何查看 jupyter 使用了哪些 kernel</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span> ~ jupyter kernelspec list
+
+Available kernels:
+  weixin     /Users/xxx/Library/Jupyter/kernels/weixin
+  python3    /Users/xxx/anaconda3/share/jupyter/kernels/python3
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">如何新增 kernel</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="bash" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;"></span><span style="color:rgb(153, 153, 136);"># 创建python环境</span>
+conda create -n weixin python=3.6 
+<span style="color:rgb(153, 153, 136);"># 激活</span>
+<span style="color:rgb(0, 134, 179);">source</span> activate weixin
+<span style="color:rgb(153, 153, 136);"># 加入到juypter</span>
+python -m ipykernel install --user --name weixin --display-name <span style="color:rgb(221, 17, 68);">&quot;Python (weixin)&quot;</span>
+
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="搭建数据分析环境：Anaconda、Jupyter Notebook_files/1 [3]" type="image/webp" data-filename="1" height="319" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="645"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">新增了 kernel 之后，你可以在不同的 kernel 之间切换运行代码，本质上 kernel 还是 Python 的虚拟环境。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">推荐一个Jupyter Notebook 的视频教程：<a href="https://link.juejin.im/?target=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DHW29067qVWk" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">Jupyter Notebook Tutorial: Introduction, Setup, and Walkthrough</a>（需要翻墙）</p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div>
+</div>
+</span>
+</div></body></html> 

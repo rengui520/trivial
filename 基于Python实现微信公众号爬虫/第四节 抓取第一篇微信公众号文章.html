@@ -1,0 +1,162 @@
+<html>
+<head>
+  <title>抓取第一篇微信公众号文章</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/600553 (zh-CN, DDL); Windows/6.1.1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="22828"/>
+<h1>抓取第一篇微信公众号文章</h1>
+
+<div><span>
+  <div>
+<div><br/></div><div style="font-size: 16px; display:block; min-width: 100%; position: relative;"> <div style="font-family:-apple-system, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Helvetica Neue&quot;, Arial, sans-serif;text-size-adjust:100%;font-size:12px;text-rendering:optimizeLegibility;color:rgb(51, 51, 51);background-color:rgb(244, 245, 245);word-break:break-word;"><div style="font-size:12px;line-height:normal;word-break:break-word;"><div style="overflow-x:initial;"><div style="overflow:hidden;"><div><div style="transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;"><div><div style="box-sizing:border-box;background-color:rgb(230, 231, 233);"><div><div><div style="box-shadow:rgba(0, 0, 0, 0.15) 1px 1px 8px;background-color:rgb(255, 255, 255);border-radius:2px;box-sizing:border-box;"><div style="word-break:break-word;line-height:1.75;font-weight:400;font-size:15px;overflow-x:hidden;"><h1 style="font-size:30px;margin:1.3rem 0px;line-height:1.5;color:rgb(51, 51, 51);margin-top:35px;margin-bottom:5px;padding-bottom:5px;">抓取第一篇微信公众号文章</h1>
+<p style="line-height:inherit;margin-bottom:22px;margin-top:25px;">上一节我们熟悉了 Fiddler 的基本操作以及每个模块所代表的意义，这节我们详细了解获取微信公众号历史文章接口的请求情况，以及如何使用 Python 模拟微信发送请求获取公众号文章的基本信息。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">打开微信历史消息页面，我们从 Fiddler 看到了很多请求，为了找到微信历史文章的接口，我们要逐个查看 Response 返回的内容，最后发现第 11 个请求 &quot;<a href="https://link.juejin.im/?target=https%3A%2F%2Fmp.weixin.qq.com%2Fmp%2Fprofile_ext%3Faction%3Dhome" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">mp.weixin.qq.com/mp/profile_…</a>...&quot; 就是我们要寻找的（我是怎么找到的呢？这个和你的经验有关，你可以点击逐个请求，看看返回的Response内容是不是期望的内容）</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1" type="image/webp" data-filename="1" height="378" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">确定微信公众号的请求HOST是 <a href="https://link.juejin.im/?target=http%3A%2F%2Fmp.weixin.qq.com" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">mp.weixin.qq.com</a> 之后，我们可以使用过滤器来过滤掉不相关的请求。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [1]" type="image/webp" data-filename="1" height="248" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">爬虫的基本原理就是模拟浏览器发送 HTTP 请求，然后从服务器得到响应结果，现在我们就用 Python 实现如何发送一个 HTTP 请求。这里我们使用 requests 库来发送请求。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"><strong style="font-weight:700;">创建一个 Pycharm 项目</strong></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">我们使用 Pycharm 作为开发工具，你也可以使用其它你熟悉的工具，Python 环境是 Python3（推荐使用 Python3.6），先创建一个项目 weixincrawler</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [2]" type="image/webp" data-filename="1" height="293" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="653"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">现在我们来编写一个最粗糙的版本，你需要做两件事：</p>
+<ul style="padding:0px;margin:0px;padding-left:28px;">
+<li style="margin-bottom:0px;list-style:inherit;">1：找到完整URL请求地址</li>
+<li style="margin-bottom:0px;list-style:inherit;">2：找到完整的请求头（headers）信息，Headers里面包括了cookie、User-agent、Host 等信息。</li>
+</ul>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">我们直接从 Fiddler 请求中拷贝 URL 和 Headers， <strong style="font-weight:700;">右键 -&gt; Copy -&gt; Just Url/Headers Only</strong></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [3]" type="image/webp" data-filename="1" height="224" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最终拷贝出来的URL很长，它包含了很多的参数</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>url = <span style="color:rgb(221, 17, 68);">&quot;https://mp.weixin.qq.com/mp/profile_ext&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;?action=home&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;__biz=MjM5MzgyODQxMQ==&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;scene=124&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;devicetype=android-24&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;version=26051633&amp;lang=zh_CN&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;nettype=WIFI&amp;a8scene=3&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;pass_ticket=MXADI5SFjXvX7DFPRuUEJhWHEWvRha2x1Re%2BoJkveUxIonMfnxY1kM9cOPmm6JRx&quot;</span> \
+      <span style="color:rgb(221, 17, 68);">&quot;&amp;wx_header=1&quot;</span>
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">暂且不去分析（猜测）每个参数的意义，也不知道那些参数是必须的，总之我把这些参数全部提取出来。然后把 Headers 拷贝出来，发现 Fiddler 把 请求行、响应行、响应头都包括进来了，我们只需要中间的请求头部分。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [4]" type="image/webp" data-filename="1" height="385" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="633"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">因为 requests.get 方法里面的 headers 参数必须是字典对象，所以，先要写个函数把刚刚拷贝的字符串转换成字典对象。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">headers_to_dict</span><span>(headers)</span>:</span>
+    <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+    将字符串
+    '''
+    Host: mp.weixin.qq.com
+    Connection: keep-alive
+    Cache-Control: max-age=
+    '''
+    转换成字典对象
+    {
+        &quot;Host&quot;: &quot;mp.weixin.qq.com&quot;,
+        &quot;Connection&quot;: &quot;keep-alive&quot;,
+        &quot;Cache-Control&quot;:&quot;max-age=&quot;
+    }
+    :param headers: str
+    :return: dict
+    &quot;&quot;&quot;</span>
+    headers = headers.split(<span style="color:rgb(221, 17, 68);">&quot;\n&quot;</span>)
+    d_headers = dict()
+    <span style="color:rgb(51, 51, 51);font-weight:700;">for</span> h <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> headers:
+        <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> h:
+            k, v = h.split(<span style="color:rgb(221, 17, 68);">&quot;:&quot;</span>, <span style="color:teal;">1</span>)
+            d_headers[k] = v.strip()
+    <span style="color:rgb(51, 51, 51);font-weight:700;">return</span> d_headers
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最终 v0.1 版本出来了，不出意外的话，公众号历史文章数据就在 response.text 中。如果返回的内容非常短，而且title标签是<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">&lt;title&gt;验证&lt;/title&gt;</code>，那么说明你的请求参数或者请求头有误，最有可能的一种请求就是 Headers 里面的 Cookie 字段过期，从手机微信端重新发起一次请求获取最新的请求参数和请求头试试。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(153, 153, 136);"># v0.1</span>
+<span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">crawl</span><span>()</span>:</span>
+    url = <span style="color:rgb(221, 17, 68);">&quot;https://mp.weixin.qq.com/...&quot;</span> <span style="color:rgb(153, 153, 136);"># 省略了</span>
+    headers = <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;  # 省略了
+Host: mp.weixin.qq.com
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+    &quot;&quot;&quot;</span>
+    headers = headers_to_dict(headers)
+    response = requests.get(url, headers=headers, verify=<span style="color:rgb(51, 51, 51);font-weight:700;">False</span>)
+    print(response.text)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最后，我们顺带把响应结果另存为html文件，以便后面重复使用，分析里面的内容</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span style="color:rgb(51, 51, 51);font-weight:700;">with</span> open(<span style="color:rgb(221, 17, 68);">&quot;weixin_history.html&quot;</span>, <span style="color:rgb(221, 17, 68);">&quot;w&quot;</span>, encoding=<span style="color:rgb(221, 17, 68);">&quot;utf-8&quot;</span>) <span style="color:rgb(51, 51, 51);font-weight:700;">as</span> f:
+    f.write(response.text)
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">用浏览器打开 weixin_history.html 文件，查看该页面的源代码，搜索微信历史文章标题的关键字 &quot;11月赠书&quot;（就是我以往发的文章），你会发现，历史文章封装在叫 msgList 的数组中（实际上该数组包装在字典结构中），这是一个 Json 格式的数据，但是里面还有 html 转义字符需要处理</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [5]" type="image/webp" data-filename="1" height="319" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="680"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">接下来我们就来写一个方法提取出历史文章数据，分三个步骤，首先用正则提取数据内容，然后 html 转义处理，最终得到一个列表对象，返回最近发布的10篇文章。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span><span><span style="color:rgb(51, 51, 51);font-weight:700;">def</span> <span style="color:rgb(153, 0, 0);font-weight:700;">extract_data</span><span>(html_content)</span>:</span>
+    <span style="color:rgb(221, 17, 68);">&quot;&quot;&quot;
+    从html页面中提取历史文章数据
+    :param html_content 页面源代码
+    :return: 历史文章列表
+    &quot;&quot;&quot;</span>
+    <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> re
+    <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> html
+    <span style="color:rgb(51, 51, 51);font-weight:700;">import</span> json
+
+    rex = <span style="color:rgb(221, 17, 68);">&quot;msgList = '({.*?})'&quot;</span>
+    pattern = re.compile(pattern=rex, flags=re.S)
+    match = pattern.search(html_content)
+    <span style="color:rgb(51, 51, 51);font-weight:700;">if</span> match:
+        data = match.group(<span style="color:teal;">1</span>)
+        data = html.unescape(data)
+        data = json.loads(data)
+        articles = data.get(<span style="color:rgb(221, 17, 68);">&quot;list&quot;</span>)
+        <span style="color:rgb(51, 51, 51);font-weight:700;">for</span> item <span style="color:rgb(51, 51, 51);font-weight:700;">in</span> articles:
+            print(item)
+        <span style="color:rgb(51, 51, 51);font-weight:700;">return</span> articles
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">最终提取出来的数据总共有10条，就是最近发表的10条数据，我们看看每条数据返回有哪些字段。</p>
+<pre style="font-size:1em;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;line-height:1.75;overflow:auto;position:relative;"><code lang="python" style="border-radius:2px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;background-color:rgb(255, 245, 245);word-break:normal;color:rgb(51, 51, 51);font-size:11px;overflow-x:auto;margin:0px;display:block;background:rgb(248, 248, 248);padding:18px 15px 12px;"><span style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:11px;color:rgb(51, 51, 51);position:absolute;right:15px;top:2px;">python</span>article = {'app_msg_ext_info': 
+                {'title': '11月赠书，总共10本，附Python书单',
+                 'copyright_stat': 11,
+                 'is_multi': 1,
+                 'content': '',
+                 'author': '刘志军',
+                 'subtype': 9,
+                 'del_flag': 1,
+                 'fileid': 502883895,
+                 'content_url': 'http:\\/\\/mp.weixin.qq.com...',
+                 ''
+                 'digest': '十一月份赠书福利如期而至，更多惊喜等着你',
+                 'cover': 'http:\\/\\/mmbiz.qpic.cn\\...',
+                 'multi_app_msg_item_list': [{'fileid': 861719336,
+                                              'content_url': 'http:\\/\\/mp.weixin.qq.com',
+                                              'content': '', 'copyright_stat': 11,
+                                              'cover': 'http:\\/\\/mmbiz.qpic.cn',
+                                              'del_flag': 1,
+                                              'digest': '多数情况下，人是种短视的动物',
+                                              'source_url': '',
+                                              'title': '罗胖60秒：诺贝尔奖设立时，为何会被骂？',
+                                              'author': '罗振宇'
+                                              }],
+                 'source_url': 'https:\\/\\/github.com\'
+                 },
+      'comm_msg_info': {'datetime': 1511827200,
+                        'status': 2,
+                        'id': 1000000161,
+                        'fakeid': '2393828411',
+                        'content': '',
+                        'type': 49}}
+</code></pre><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">我们结合下面这张图来看：</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p><div style="display:block;margin:22px auto;text-align:center;"><img src="抓取第一篇微信公众号文章_files/1 [6]" type="image/webp" data-filename="1" height="599" style="background-color:transparent;width:auto;border-style:none;height:auto;max-height:none;visibility:visible;background-position:50% center;background-repeat:no-repeat;background-image:none;margin:0px;cursor:zoom-in;max-width:100%;" width="400"/><div style="display:block;text-align:center;font-size:12px;line-height:1.6;color:rgb(144, 144, 144);margin-top:2px;"></div></div><p style="line-height:inherit;margin-top:22px;margin-bottom:22px;"></p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">上面这张图是微信作为单次推送发给用户的多图文消息，有发送时间对应<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">comm_msg_info.datetime</code>，<code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">app_msg_ext_info</code>中的字段信息就是第一篇文章的字段信息，分别对应：</p>
+<ul style="padding:0px;margin:0px;padding-left:28px;">
+<li style="margin-bottom:0px;list-style:inherit;">title：文章标题</li>
+<li style="margin-bottom:0px;list-style:inherit;">content_url：文章链接</li>
+<li style="margin-bottom:0px;list-style:inherit;">source_url：原文链接，有可能为空</li>
+<li style="margin-bottom:0px;list-style:inherit;">digest：摘要</li>
+<li style="margin-bottom:0px;list-style:inherit;">cover：封面图</li>
+<li style="margin-bottom:0px;list-style:inherit;">datetime：推送时间</li>
+</ul>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">后面几篇文章以列表的形式保存在 <code style="font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;font-size:0.87em;padding:0.065em 0.4em;word-break:break-word;color:rgb(255, 80, 44);background-color:rgb(255, 245, 245);border-radius:2px;overflow-x:auto;">multi_app_msg_item_list</code> 字段中。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">到此，公众号文章的基本信息就抓到了，但也仅仅只是公众号的前10条推送，如何获取更多历史文章等问题放在下节讲解。</p>
+<p style="line-height:inherit;margin-top:22px;margin-bottom:22px;">本节完整代码可以在GitHub仓库<a href="https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fpythonzhichan%2Fweixincrawler%2Ftree%2Fv0.1" rel="nofollow noopener noreferrer" style="margin:initial;background-color:transparent;text-decoration:none;cursor:pointer;color:rgb(2, 105, 200);border-bottom:1px solid rgb(209, 233, 255);" target="_blank">weixincrawler_v</a>查看。</p>
+</div></div></div></div></div></div></div></div></div></div></div></div></div>
+</div>
+</span>
+</div></body></html> 
